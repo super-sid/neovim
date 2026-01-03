@@ -1,0 +1,53 @@
+return {
+  {
+    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+    -- used for completion, annotations and signatures of Neovim apis
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+  {
+    {
+      'folke/trouble.nvim',
+      opts = {}, -- for default options, refer to the configuration section for custom setup.
+      cmd = 'Trouble',
+      keys = {
+        {
+          '<leader>xx',
+          '<cmd>Trouble diagnostics toggle<cr>',
+          desc = 'Diagnostics (Trouble)',
+        },
+        {
+          '<leader>xX',
+          '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+          desc = 'Buffer Diagnostics (Trouble)',
+        },
+        {
+          '<leader>cs',
+          '<cmd>Trouble symbols toggle focus=false<cr>',
+          desc = 'Symbols (Trouble)',
+        },
+        {
+          '<leader>cl',
+          '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+          desc = 'LSP Definitions / references / ... (Trouble)',
+        },
+        {
+          '<leader>xL',
+          '<cmd>Trouble loclist toggle<cr>',
+          desc = 'Location List (Trouble)',
+        },
+        {
+          '<leader>xQ',
+          '<cmd>Trouble qflist toggle<cr>',
+          desc = 'Quickfix List (Trouble)',
+        },
+      },
+    },
+  },
+}
