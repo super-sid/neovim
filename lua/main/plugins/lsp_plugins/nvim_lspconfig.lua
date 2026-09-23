@@ -17,33 +17,14 @@ return {
     'saghen/blink.cmp',
   },
   config = function()
-    local lspconfig = require 'lspconfig'
+    local lspconfig = vim.lsp.config
     -- Global LSP capabilities
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     local capabilities = require('blink.cmp').get_lsp_capabilities()
 
     -- LSP server configurations
-    lspconfig.ruby_lsp.setup {
-      cmd = { 'ruby-lsp' }, -- Or 'bundle', 'exec', 'ruby-lsp' etc.
-      filetypes = { 'ruby', 'eruby', 'rake' },
-      root_dir = require('lspconfig.util').root_pattern('Gemfile', '.git'),
-      on_attach = function(client, bufnr)
-        -- Your on_attach function from Step 2
-        local opts = { noremap = true, silent = true }
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-        vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-      end,
-    }
     -- pyright for Python
-    lspconfig.pyright.setup {
+    lspconfig('pyright', {
       capabilities = capabilities,
       on_attach = function(client, bufnr)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr, desc = 'Go to Definition' })
@@ -57,10 +38,10 @@ return {
           vim.lsp.buf.format { async = true }
         end, { buffer = bufnr, desc = 'Format Document' })
       end,
-    }
+    })
 
     -- tsserver for JavaScript/TypeScript
-    lspconfig.ts_ls.setup {
+    lspconfig('ts_ls', {
       capabilities = capabilities,
       on_attach = function(_, bufnr)
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { buffer = bufnr, desc = 'Go to Definition' })
@@ -74,7 +55,8 @@ return {
           vim.lsp.buf.format { async = true }
         end, { buffer = bufnr, desc = 'Format Document' })
       end,
-    }
+    })
+
     -- Brief aside: **What is LSP?**
     --
     -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -266,7 +248,6 @@ return {
       -- ts_ls = {},
       --
 
-      ruby_lsp = {},
       pyright = {},
       gopls = {},
       ts_ls = {},
@@ -321,7 +302,8 @@ return {
           -- by the server configuration above. Useful when disabling
           -- certain features of an LSP (for example, turning off formatting for ts_ls)
           server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-          require('lspconfig')[server_name].setup(server)
+          vim.lsp.config(server_name, server)
+          vim.lsp.enable(server_name)
         end,
       },
     }
